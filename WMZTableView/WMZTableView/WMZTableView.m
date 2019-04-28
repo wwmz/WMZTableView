@@ -144,7 +144,7 @@ WMZTableView * PlainTableView(void){
             if (self.isSection) {
                 if (changeData.count == self.simpleDataArr.count) {
                     for (int i = 0; i<changeData.count; i++) {
-                        [self compareSectionData:changeData[i] beforeData:self.simpleDataArr[i] changeData:self.dataArr[i] withSection:i];
+                        [self compareData:changeData[i] beforeData:self.simpleDataArr[i] changeData:self.dataArr[i] withSection:i];
                     }
                 }else{
                     /*
@@ -482,127 +482,7 @@ WMZTableView * PlainTableView(void){
 }
 
 
-/*
- *对比改变后的数据源与原来的数据源 并刷新 section
- */
-- (void)compareSectionData:(NSMutableArray*)data beforeData:(NSMutableArray*)beforeData changeData:(NSMutableArray*)nornalData withSection:(NSInteger)section{
-    TICK
-    //更新的块
-    NSMutableArray *changePathArr = [NSMutableArray new];
-    //添加的块
-    NSMutableArray *insertPathArr = [NSMutableArray new];
-    //删除的块
-    NSMutableArray *deletePathArr = [NSMutableArray new];
-    
-    //取出相同的
-    NSMutableArray *sameArr = [NSMutableArray new];
-    //找出beforeData中有 data没有的
-    NSMutableArray *differentArr = [NSMutableArray new];
-    //找出data中有 beforeData没有的
-    NSMutableArray *addArr = [NSMutableArray new];
-    
-    
-    
-    for (int i = 0; i<beforeData.count; i++) {
-        id model = beforeData[i];
-        
-        if ([data indexOfObject:model] != NSNotFound) {
-            //找出相等的
-            [sameArr addObject:@{
-                                 @"index":@(i),
-                                 @"model":model
-                                 }];
-        }else{
-            //找出self.simpleDataArr中有 data没有的
-            [differentArr addObject:@{
-                                      @"index":@(i),
-                                      @"model":model
-                                      }];
-        }
-    }
-    
-    
-    for (int i = 0; i<data.count; i++) {
-        id model = data[i];
-        //找出data中有 self.simpleDataArr没有的
-        if ([beforeData indexOfObject:model] == NSNotFound) {
-            [addArr addObject:@{
-                                @"index":@(i),
-                                @"model":model
-                                }];
-        }
-    }
-    
-    
-    NSMutableArray *changeArr = [self compareModelArr:sameArr beforeData:nornalData];
-    
-    //局部刷新
-    if (changeArr.count>0) {
-        
-        for (int i = 0; i< changeArr.count; i++) {
-            NSDictionary *dic = changeArr[i];
-            id changeModel = dic[@"changeModel"];
-            
-            NSInteger index = [dic[@"index"] integerValue];
-            //重新复制
-            [nornalData replaceObjectAtIndex:index withObject:[changeModel copy]];
-            
-            [self reSetCellName:[changeModel valueForKey:@"cellName"]];
-            
-            NSIndexPath *path = [NSIndexPath indexPathForRow:index inSection:section];
-            [changePathArr addObject:path];
-        }
-        
-        
-        if (changePathArr.count>0) {
-            [self reloadRowsAtIndexPaths:[NSArray arrayWithArray:changePathArr] withRowAnimation:UITableViewRowAnimationNone];
-        }
-        
-    }
-    
-    if (differentArr.count>0) {
-        //倒序删除 防止数组在删除的时候index发生改变 导致删除错误或崩溃
-        for (int i = (int)differentArr.count-1; i>= 0; i--) {
-            NSDictionary *dic = differentArr[i];
-            NSInteger index = [dic[@"index"] integerValue];
-            
-            [nornalData removeObjectAtIndex:index];
-            
-            NSIndexPath *path = [NSIndexPath indexPathForRow:index inSection:section];
-            [deletePathArr addObject:path];
-        }
-        //局部删除
-        if (deletePathArr.count>0) {
-            [self deleteRowsAtIndexPaths:[NSArray arrayWithArray:deletePathArr] withRowAnimation:UITableViewRowAnimationNone];
-        }
-    }
-    
-    if (addArr.count > 0) {
-        for (int i = 0; i< addArr.count; i++) {
-            NSDictionary *dic = addArr[i];
-            id changeModel = dic[@"model"];
-            NSInteger index = [dic[@"index"] integerValue];
-            if (nornalData.count>index) {
-                [nornalData insertObject:[changeModel copy] atIndex:index];
-            }else{
-                [nornalData addObject:[changeModel copy]];
-            }
-            
-            [self reSetCellName:[changeModel valueForKey:@"cellName"]];
-            NSIndexPath *path = [NSIndexPath indexPathForRow:index inSection:section];
-            [insertPathArr addObject:path];
-        }
-        
-        
-        //局部增加
-        if (insertPathArr.count>0) {
-            [self insertRowsAtIndexPaths:[NSArray arrayWithArray:insertPathArr] withRowAnimation:UITableViewRowAnimationNone];
-        }
-    }
-    
-    TOCK
-    
-}
+
 
 //注册未注册过的cellName
 - (void)reSetCellName:(NSString*)cellName{
@@ -637,6 +517,11 @@ WMZTableView * PlainTableView(void){
         
         if (modelCount != compareModelCount) {
             NSLog(@"不相等,两个元素发生了改变");
+            [changeArr addObject:@{
+                                   @"index":@(index),
+                                   @"model":model,
+                                   @"changeModel":compareModel
+                                   }];
             continue;
         }else{
             
