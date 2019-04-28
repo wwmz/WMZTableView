@@ -138,9 +138,6 @@ typedef enum : NSUInteger{
 
 
 @interface WMZTableView : UITableView
-
-@property(nonatomic,weak) id <WMZTableViewDelegate> WMZdelegate;
-
 /* =========================================重要属性==============================================*/
 /* =========================================重要属性==============================================*/
 /* =========================================重要属性==============================================*/
@@ -186,6 +183,18 @@ WMZTableView * PlainTableView(void);
 @property(nonatomic,copy,readonly) WMZTableView *(^wDidSelect)(WMZSelectCallBlock block);
 
 
+
+/*
+ *  更新数据 把改变完的数组传进来即可 自动局部刷新
+ */
+@property(nonatomic,strong,readonly) WMZTableView *(^wUpdateData)(NSMutableArray *changeData);
+
+
+/*
+ *  WMZ代理 其他的tableview的代理方法
+ */
+@property(nonatomic,weak,readonly) WMZTableView *(^wOtherDelegate)(id <WMZTableViewDelegate> delegate);
+
 /* =========================================重要属性==============================================*/
 /* =========================================重要属性==============================================*/
 /* =========================================重要属性==============================================*/
@@ -199,7 +208,7 @@ WMZTableView * PlainTableView(void);
 
 
 /*
- *  kvo写法 适合继承或直接使用wBaseModel 需要传cell对应class的名字 对组件化熟悉的可以调用 模型控制UI
+ *  kvc写法 适合继承或直接使用wBaseModel 需要传cell对应class的名字 对组件化熟悉的可以调用 模型控制UI
  */
 @property(nonatomic,assign,readonly) WMZTableView *(^wAutoCell)(BOOL autoCell);
 
@@ -271,7 +280,7 @@ WMZTableView * PlainTableView(void);
 
 
 //自定义baseModel类
-@interface wBaseModel : NSObject
+@interface wBaseModel : NSObject<NSCopying>
 
 @property(nonatomic,copy)NSString *cellName;
 

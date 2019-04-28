@@ -11,6 +11,7 @@
 @interface ViewController ()<WMZTableViewDelegate>
 @property(nonatomic,strong)NSMutableArray *dataArr;
 @property(nonatomic,strong)NSMutableArray *modelArr;
+@property(nonatomic,strong)WMZTableView *tableView;
 @end
 
 @implementation ViewController
@@ -28,9 +29,18 @@
 //    .wStart();
     
     
+    UIButton *leftbutton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+    [leftbutton setTitle:@"改变" forState:UIControlStateNormal];
+    [leftbutton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [leftbutton addTarget:self action:@selector(add) forControlEvents:UIControlEventTouchUpInside];
+    UIBarButtonItem*item = [[UIBarButtonItem alloc]initWithCustomView:leftbutton];
+    self.navigationItem.rightBarButtonItem = item;
+    
+    
+    
     if (_type==0) {
         WMZWeakSelf
-        GroupTableView()
+        self.tableView = GroupTableView()
         .wDealCell(^UITableViewCell *(NSIndexPath *indexPath, UITableView *tableView,id model) {
             UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UITableViewCell class])];
             if (!cell) {
@@ -49,10 +59,9 @@
         .wStart();
 
 
-
     }else{
 
-        GroupTableView()
+       self.tableView = GroupTableView()
         .wAutoCell(YES)
         .wMasonryConfig(self.view, ^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(0);
@@ -77,17 +86,44 @@
 //            return view;
 //        })
 //        .wSection(YES)
+         .wOtherDelegate(self)
          .wStart();
+    
         
-//        ta.WMZdelegate = self;
-
     }
     
-    
-    
-  
-    
 }
+
+
+
+- (void)add{
+
+    wBaseModel *model1 = [wBaseModel new];
+    model1.cellName = @"NornalCell";
+    model1.labelName = @"我是增加的文本1";
+//
+    wBaseModel *model2 = [wBaseModel new];
+    model2.cellName = @"NornalCellOne";
+    model2.labelName = @"我是增加的文本和图片";
+    model2.imageName = @"8.jpg";
+//
+    [self.modelArr removeObjectAtIndex:0];
+    [self.modelArr addObject:model1];
+    [self.modelArr removeObjectAtIndex:0];
+    [self.modelArr removeObjectAtIndex:0];
+    [self.modelArr insertObject:model1 atIndex:1];
+    [self.modelArr addObject:model1];
+    [self.modelArr addObject:model2];
+//////
+          wBaseModel *model = self.modelArr[0];
+          model.cellName = @"NornalCell";
+          model.labelName = @"我是改变的文本";
+    
+    
+    self.tableView.wUpdateData(self.modelArr);
+
+}
+
 
 - (NSMutableArray *)dataArr{
     if (!_dataArr) {
@@ -101,6 +137,7 @@
         _modelArr = [NSMutableArray new];
         
         int x = arc4random() % 30+10;
+        x = 5;
         int x1 = arc4random() % 3+1;
         int x2 = arc4random() % 6+4;
        for (int i = 0; i<x; i++) {
@@ -118,7 +155,7 @@
                 model.imageName = [NSString stringWithFormat:@"%d.jpg",x3];
             }
 //           Sections
-//            [_modelArr addObject:@[model]];
+//            [_modelArr addObject:[NSMutableArray arrayWithObject:model]];
            
 //           Rows
             [_modelArr addObject:model];
