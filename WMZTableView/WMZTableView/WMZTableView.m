@@ -22,8 +22,6 @@
 
 @property (nonatomic, assign) BOOL config ;                          //tableview开启默认配置
 
-@property (nonatomic, strong) UIView *parentView;                    //parentView
-
 @property (nonatomic, strong) NSMutableArray *dataArr;               //dataArr 深拷贝
 
 @property (nonatomic, strong) NSMutableArray *simpleDataArr;         //dataArr 普通赋值
@@ -710,6 +708,7 @@ WMZTableView * PlainTableView(void){
 
 
 - (void)dealloc{
+    NSLog(@"view销毁");
 //    [self removeObserver:self forKeyPath:@"dataArr"];
 }
 

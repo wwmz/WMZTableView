@@ -28,13 +28,15 @@
 //    }, self.modelArr)
 //    .wStart();
     
-    
-    UIButton *leftbutton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
-    [leftbutton setTitle:@"改变" forState:UIControlStateNormal];
-    [leftbutton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    [leftbutton addTarget:self action:@selector(add) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem*item = [[UIBarButtonItem alloc]initWithCustomView:leftbutton];
-    self.navigationItem.rightBarButtonItem = item;
+    if (self.type!=0) {
+        UIButton *leftbutton = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, 44, 44)];
+        [leftbutton setTitle:@"改变" forState:UIControlStateNormal];
+        [leftbutton setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+        [leftbutton addTarget:self action:@selector(add) forControlEvents:UIControlEventTouchUpInside];
+        UIBarButtonItem*item = [[UIBarButtonItem alloc]initWithCustomView:leftbutton];
+        self.navigationItem.rightBarButtonItem = item;
+    }
+
     
     
     
@@ -192,6 +194,5 @@
 
 -(void)WMZTableViewWillDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath{
 }
-
 
 @end
