@@ -570,7 +570,7 @@ WMZTableView * PlainTableView(void){
     if (self.footViewBlock) {
         return self.footViewBlock(section,tableView);
     }
-    return [UIView new];
+    return nil;
 }
 
 
@@ -578,7 +578,7 @@ WMZTableView * PlainTableView(void){
     if (self.headViewBlock) {
         return self.headViewBlock(section,tableView);
     }
-    return [UIView new];
+    return nil;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{

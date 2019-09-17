@@ -68,6 +68,7 @@
         .wMasonryConfig(self.view, ^(MASConstraintMaker *make) {
             make.edges.mas_equalTo(0);
         }, self.modelArr)
+//        .wCellAnaiml(YES)
 //        .wCellHeight(^NSInteger(NSIndexPath *indexPath, UITableView *tableView) {
 //            return indexPath.row == 0 ? 200:UITableViewAutomaticDimension;
 //        })
